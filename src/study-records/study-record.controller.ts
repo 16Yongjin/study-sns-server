@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common'
 import { StudyRecordService } from './study-record.service'
 import { CreateStudyRecordDto } from './dto/create-study-record.dto'
@@ -26,10 +27,8 @@ export class StudyRecordController {
   /** 공부 내용 생성 */
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(
-    @UserInfo('id') userId: PK,
-    @Body(new ValidationPipe()) dto: CreateStudyRecordDto
-  ) {
+  @UsePipes(new ValidationPipe())
+  create(@UserInfo('id') userId: PK, @Body() dto: CreateStudyRecordDto) {
     return this.studyRecordService.create({ ...dto, userId })
   }
 
@@ -38,7 +37,7 @@ export class StudyRecordController {
     return this.studyRecordService.findPublic()
   }
 
-  @Get('me')
+  @Get('my')
   @UseGuards(JwtAuthGuard)
   findByUser(@UserInfo('id') userId: PK) {
     return this.studyRecordService.findByUser(userId)
@@ -55,6 +54,7 @@ export class StudyRecordController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
     @UserInfo('id') userId: PK,
@@ -78,10 +78,11 @@ export class StudyRecordController {
   /** 댓글 달기 */
   @Post(':id/comments')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   addComment(
     @Param('id') id: string,
     @UserInfo('id') userId: PK,
-    @Body(new ValidationPipe()) dto: CreateCommentDto
+    @Body() dto: CreateCommentDto
   ) {
     return this.studyRecordService.addComment(id, { ...dto, userId })
   }

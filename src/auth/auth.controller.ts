@@ -17,6 +17,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard'
 import { UserInfo } from '../shared/decoratos'
 import { UserAuth } from '../shared/interfaces'
 import { Role } from '../shared/enums'
+import { PK } from '../shared/types'
 
 @Controller('auth')
 export class AuthController {
@@ -43,19 +44,9 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @Post('change-password')
   async changePassword(
-    @UserInfo() user: UserAuth,
+    @UserInfo('id') userId: PK,
     @Body() dto: ChangePasswordDto
   ) {
-    const isAdmin = user.role === Role.ADMIN
-    const isUserSelf = user.username === dto.username && user.role === Role.USER
-
-    if (!isUserSelf && !isAdmin) {
-      throw new UnauthorizedException({
-        message: "You are not allowed to other's change password",
-        errors: { username: 'not allowed' },
-      })
-    }
-
-    return this.authService.changePassword(dto)
+    return this.authService.changePassword(userId, dto)
   }
 }

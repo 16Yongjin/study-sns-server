@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt'
 import { UserService } from '../users/user.service'
 import { ChangePasswordDto, CreateUserDto } from '../users/dto'
 import { User } from '../users/entities/user.entity'
+import { PK } from '../shared/types'
 
 @Injectable()
 export class AuthService {
@@ -57,8 +58,8 @@ export class AuthService {
     return this.buildUserRO(savedUser)
   }
 
-  async changePassword(dto: ChangePasswordDto) {
-    const user = await this.userService.changePassword(dto)
+  async changePassword(userId: PK, dto: ChangePasswordDto) {
+    const user = await this.userService.changePassword(userId, dto)
     return this.buildUserRO(user)
   }
 

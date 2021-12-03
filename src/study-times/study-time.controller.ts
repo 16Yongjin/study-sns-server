@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ValidationPipe,
+  UsePipes,
 } from '@nestjs/common'
 import { StudyTimeService } from './study-time.service'
 import { CreateStudyTimeDto } from './dto/create-study-time.dto'
@@ -23,10 +24,8 @@ export class StudyTimeController {
   /** 공부 시간 생성 */
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(
-    @UserInfo('id') userId: PK,
-    @Body(new ValidationPipe()) dto: CreateStudyTimeDto
-  ) {
+  @UsePipes(new ValidationPipe())
+  create(@UserInfo('id') userId: PK, @Body() dto: CreateStudyTimeDto) {
     return this.studyTimeService.create({ ...dto, userId })
   }
 
@@ -50,10 +49,11 @@ export class StudyTimeController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: PK,
     @UserInfo('id') userId: PK,
-    @Body(new ValidationPipe()) dto: UpdateStudyTimeDto
+    @Body() dto: UpdateStudyTimeDto
   ) {
     await this.studyTimeService.checkPermission(id, userId)
 

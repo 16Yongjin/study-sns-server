@@ -156,22 +156,6 @@ describe('AuthModule /auth (e2e)', () => {
 
       await agent.login(changePasswordData)
     })
-
-    it('다른 유저의 비밀번호 변경 불가: ', async () => {
-      const loginData = {
-        username: users[1].username,
-        password: USER_PASSWORD,
-      }
-
-      await agent.login(loginData)
-
-      const changePasswordData = {
-        username: users[2].username,
-        password: '654321',
-      }
-
-      await agent.changePassword(changePasswordData, { unauthorized: true })
-    })
   })
 
   afterEach(async () => {

@@ -54,10 +54,7 @@ export class UserAgent {
     return this.get({ url: '/auth/me', options })
   }
 
-  changePassword(
-    data: { username: string; password: string },
-    options = requestOpitons
-  ) {
+  changePassword(data: { password: string }, options = requestOpitons) {
     return this.post({
       url: '/auth/change-password',
       data,
@@ -173,10 +170,6 @@ export class UserAgent {
   }
 
   getStudyRecord(id: PK, options = requestOpitons) {
-    return this.get({ url: `/study-records/${id}`, options })
-  }
-
-  getTodayStudy(id: PK, options = requestOpitons) {
     return this.get({ url: `/study-records/${id}`, options })
   }
 

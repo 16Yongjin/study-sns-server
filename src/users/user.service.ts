@@ -41,8 +41,8 @@ export class UserService {
     return this.userRepository.checkUser(username, email)
   }
 
-  async changePassword({ username, password }: ChangePasswordDto) {
-    const user = await this.findOneByUsername(username)
+  async changePassword(id: PK, { password }: ChangePasswordDto) {
+    const user = await this.findOne(id)
 
     await user.changePassword(password)
 

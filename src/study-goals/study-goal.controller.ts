@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  UsePipes,
 } from '@nestjs/common'
 import { StudyGoalService } from './study-goal.service'
 import { CreateStudyGoalDto } from './dto/create-study-goal.dto'
@@ -23,9 +24,10 @@ export class StudyGoalController {
   /** 공부 목표 생성 */
   @Post()
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   create(
     @UserInfo('id') userId: PK,
-    @Body(new ValidationPipe()) createStudyGoalDto: CreateStudyGoalDto
+    @Body() createStudyGoalDto: CreateStudyGoalDto
   ) {
     return this.studyGoalService.create(userId, createStudyGoalDto)
   }
@@ -47,10 +49,11 @@ export class StudyGoalController {
   /** 공부 목표 수정 */
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: PK,
     @UserInfo('id') userId: PK,
-    @Body(new ValidationPipe()) dto: UpdateStudyGoalDto
+    @Body() dto: UpdateStudyGoalDto
   ) {
     await this.studyGoalService.checkPermission(id, userId)
     return this.studyGoalService.update(id, dto)
