@@ -5,6 +5,7 @@ import { User } from '../users/entities/user.entity'
 import { StudyGoal } from '../study-goals/entities/study-goal.entity'
 import dayjs from 'dayjs'
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity'
+import { getToday } from '../utils/date'
 
 @EntityRepository(StudyTime)
 export class StudyTimeRepository extends AbstractRepository<StudyTime> {
@@ -34,18 +35,20 @@ export class StudyTimeRepository extends AbstractRepository<StudyTime> {
     })
   }
 
-  findByUser(user: User) {
+  findByUser(user: User, relations: string[] = []) {
     return this.repository.find({
       where: { user },
+      relations,
     })
   }
 
-  findToday(user: User) {
+  findToday(user: User, relations: string[] = []) {
     return this.repository.find({
       where: {
         user,
-        createdAt: MoreThan(dayjs().startOf('d')),
+        createdAt: MoreThan(getToday()),
       },
+      relations,
     })
   }
 

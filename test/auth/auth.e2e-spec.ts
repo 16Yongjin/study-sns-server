@@ -2,11 +2,11 @@ import 'dotenv/config'
 import { Test, TestingModule } from '@nestjs/testing'
 import { INestApplication } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
+import { Connection, Repository } from 'typeorm'
 import { AuthModule } from './../../src/auth/auth.module'
 import { User } from '../../src/users/entities/user.entity'
 import { createUsers, createUserData, USER_PASSWORD } from '../data/users.dummy'
-import { testConnection } from '../connection/typeorm'
+import { cleanFixtures, testConnection } from '../connection/typeorm'
 import { UserAgent } from '../agent/user.agent'
 
 describe('AuthModule /auth (e2e)', () => {
@@ -14,6 +14,7 @@ describe('AuthModule /auth (e2e)', () => {
   let userRepository: Repository<User>
   let users: User[]
   let agent: UserAgent
+  let connection: Connection
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -23,11 +24,12 @@ describe('AuthModule /auth (e2e)', () => {
     app = moduleFixture.createNestApplication()
     await app.init()
 
+    connection = moduleFixture.get('Connection')
     userRepository = moduleFixture.get('UserRepository')
   })
 
   beforeEach(async () => {
-    await userRepository.createQueryBuilder().delete().from(User).execute()
+    await cleanFixtures(connection)
 
     users = createUsers()
 
@@ -159,9 +161,7 @@ describe('AuthModule /auth (e2e)', () => {
   })
 
   afterEach(async () => {
-    await Promise.all([
-      userRepository.createQueryBuilder().delete().from(User).execute(),
-    ])
+    await cleanFixtures(connection)
   })
 
   afterAll(async () => {

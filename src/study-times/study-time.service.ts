@@ -48,13 +48,16 @@ export class StudyTimeService {
   /** 사용자 공부 목표 모두 가져오기 */
   async findByUser(userId: PK) {
     const user = await this.userService.findOne(userId)
-    return this.studyTimeRepository.findByUser(user)
+    return this.studyTimeRepository.findByUser(user, ['studyGoal'])
   }
 
   /** 오늘의 사용자 공부 목표 모두 가져오기 */
   async findToday(userId: PK) {
     const user = await this.userService.findOne(userId)
-    return this.studyTimeRepository.findToday(user)
+    return this.studyTimeRepository.findToday(user, [
+      'studyGoal',
+      'studyRecord',
+    ])
   }
 
   /** 공부 시간 업데이트 */

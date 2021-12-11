@@ -1,6 +1,6 @@
-import { IsPositive } from 'class-validator'
+import { Min } from 'class-validator'
 
 export class UpdateStudyTimeDto {
-  @IsPositive()
+  @Min(0)
   duration: number
 }

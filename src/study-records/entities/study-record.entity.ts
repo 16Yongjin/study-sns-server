@@ -11,6 +11,7 @@ import {
   OneToOne,
   DeleteDateColumn,
   UpdateDateColumn,
+  AfterLoad,
 } from 'typeorm'
 import { Comment } from './comment.entity'
 import { Like } from './like.entity'
@@ -22,6 +23,12 @@ export class StudyRecord extends BaseEntity {
 
   @Column()
   content!: string
+
+  @Column({ default: 0 })
+  duration: number
+
+  @Column({ default: '' })
+  studyGoal: string
 
   @Column({ default: true })
   public: boolean
@@ -54,4 +61,11 @@ export class StudyRecord extends BaseEntity {
 
   @Column({ default: 0 })
   likeCount: number
+
+  liked = false
+
+  @AfterLoad()
+  updateLiked() {
+    this.liked = !!this.likes?.length
+  }
 }

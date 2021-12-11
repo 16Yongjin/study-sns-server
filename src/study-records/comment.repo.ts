@@ -37,6 +37,7 @@ export class CommentRepository extends AbstractRepository<Comment> {
     return this.repository.find({
       where: { studyRecord },
       relations,
+      order: { createdAt: 'ASC' },
     })
   }
 

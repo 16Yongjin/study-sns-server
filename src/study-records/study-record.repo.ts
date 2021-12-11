@@ -12,6 +12,9 @@ export class StudyRecordRepository extends AbstractRepository<StudyRecord> {
     record.user = user
     record.studyTime = studyTime
     record.content = content
+    record.duration = studyTime.duration
+    record.studyGoal = studyTime.studyGoal?.name
+    record.public = true
 
     return this.repository.save(record)
   }
@@ -27,6 +30,21 @@ export class StudyRecordRepository extends AbstractRepository<StudyRecord> {
       where: { id },
       relations,
     })
+  }
+
+  findOneWithUserLike(id: PK, userId: PK) {
+    return this.repository
+      .createQueryBuilder('studyRecord')
+      .leftJoinAndSelect('studyRecord.user', 'user')
+      .leftJoinAndSelect('studyRecord.studyTime', 'studyTime')
+      .leftJoinAndSelect(
+        'studyRecord.likes',
+        'likes',
+        'likes.userId = :userId',
+        { userId }
+      )
+      .where('studyRecord.id = :id', { id })
+      .getOne()
   }
 
   /** 공부 기록 모두 가져오기 */
@@ -47,7 +65,24 @@ export class StudyRecordRepository extends AbstractRepository<StudyRecord> {
     return this.repository.find({
       where: { public: true },
       relations,
+      order: { createdAt: 'DESC' },
     })
+  }
+
+  findPublicWithUserLike(userId: PK) {
+    return this.repository
+      .createQueryBuilder('studyRecord')
+      .leftJoinAndSelect('studyRecord.user', 'user')
+      .leftJoinAndSelect('studyRecord.studyTime', 'studyTime')
+      .leftJoinAndSelect(
+        'studyRecord.likes',
+        'likes',
+        'likes.userId = :userId',
+        { userId }
+      )
+
+      .orderBy('studyRecord.createdAt', 'DESC')
+      .getMany()
   }
 
   /** 공부 기록 제거 */

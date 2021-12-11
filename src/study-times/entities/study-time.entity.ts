@@ -42,6 +42,6 @@ export class StudyTime extends BaseEntity {
   @DeleteDateColumn()
   deletedAt?: Date
 
-  @Column('integer')
+  @Column('integer', { default: 0 })
   duration = 0
 }

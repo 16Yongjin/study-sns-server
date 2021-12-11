@@ -28,9 +28,11 @@ export class StudyGoalRepository extends AbstractRepository<StudyGoal> {
     })
   }
 
-  findByUser(user: User) {
+  findByUser(user: User, relations: string[] = []) {
     return this.repository.find({
       where: { user },
+      relations,
+      order: { createdAt: 'ASC' },
     })
   }
 

@@ -33,8 +33,9 @@ export class StudyRecordController {
   }
 
   @Get()
-  findPublic() {
-    return this.studyRecordService.findPublic()
+  @UseGuards(JwtAuthGuard)
+  findPublic(@UserInfo('id') userId: PK) {
+    return this.studyRecordService.findPublic(userId)
   }
 
   @Get('my')
@@ -44,7 +45,10 @@ export class StudyRecordController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: PK) {
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: PK, @UserInfo('id') userId: PK) {
+    if (userId) return this.studyRecordService.findOneWithUserLike(id, userId)
+
     return this.studyRecordService.findOne(id, [
       'user',
       'studyTime',

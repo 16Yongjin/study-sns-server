@@ -30,7 +30,7 @@ export class StudyRecordService {
     const { userId, studyTimeId, content } = dto
     const [user, studyTime] = await Promise.all([
       this.userService.findOne(userId),
-      this.studyTimeService.findOne(studyTimeId),
+      this.studyTimeService.findOne(studyTimeId, ['studyGoal']),
     ])
 
     return this.studyRecordRepository.create(user, studyTime, content)
@@ -42,7 +42,9 @@ export class StudyRecordService {
   }
 
   /** 공개 공부 기록 목록 가져오기 */
-  findPublic() {
+  findPublic(userId?: PK) {
+    if (userId) return this.studyRecordRepository.findPublicWithUserLike(userId)
+
     return this.studyRecordRepository.findPublic([
       'user',
       'studyTime',
@@ -65,6 +67,10 @@ export class StudyRecordService {
       throw new StudyRecordNotFound(id)
     }
     return studyRecord
+  }
+
+  async findOneWithUserLike(id: PK, userId: PK) {
+    return this.studyRecordRepository.findOneWithUserLike(id, userId)
   }
 
   /** 공부 내용 업데이트 */
@@ -125,7 +131,7 @@ export class StudyRecordService {
   /** 공부 내용에 달린 댓글 목록 가져오기 */
   async findComments(id: PK) {
     const studyRecord = await this.findOne(id)
-    return this.commentRepository.findByStudyRecord(studyRecord)
+    return this.commentRepository.findByStudyRecord(studyRecord, ['user'])
   }
 
   /** 댓글 삭제 */
